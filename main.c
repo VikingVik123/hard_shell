@@ -35,7 +35,14 @@ int main(int ac, char **av, char **env)
 			lineptr = NULL;
 			_exits();
 		}
-		else if (line > 1)
+		if (line == 1 && lineptr[0] == '\n')
+		{
+			free(lineptr);
+			lineptr = NULL;
+			continue;
+		}
+
+		else
 		{
 			lineptr_cpy = _strdup(lineptr);
 
