@@ -83,7 +83,7 @@ int main(int ac, char **av, char **env)
 				if (argv[i] == NULL)
 				{
 					perror("tsh: memory allocation error");
-					
+
 					for (j = 0; j < i; j++)
 					{
 						free(argv[j]);
@@ -121,6 +121,11 @@ int main(int ac, char **av, char **env)
 					free(lineptr_cpy);
 					free(lineptr);
 					_exits();
+				}
+
+				if (access(argv[0], X_OK) == -1)
+				{
+					perror("tsh: executable not found");
 				}
 
 				_fork(argv);
