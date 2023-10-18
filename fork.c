@@ -22,6 +22,8 @@ void _fork(char **argv)
 	{
 		/*This is the child process*/
 		exec(argv);
+		perror("Error:");
+		_exits();
 	}
 	else
 	{
