@@ -5,11 +5,11 @@
  * return: 0
  */
 
-int main(int ac, char **av, char **env)
+int main(int ac, char **av, char **environ)
 {
 	char *lineptr = NULL;
 	char *lineptr_cpy = NULL;
-	const char *delim = " \n";
+	const char *delim = "\n ";
 	size_t n = 0;
 	char *token;
 	ssize_t line = 0;
@@ -20,20 +20,23 @@ int main(int ac, char **av, char **env)
 	char *prompt;
 	(void)ac;
 	(void)av;
+	
 
-	prompt = ":$ ";
+	prompt ="";
 
 	while (1)
 	{
-		_puts(prompt);
+		if (isatty(STDIN_FILENO))
+		{
+			_puts(prompt);
+		}
 		line = getline(&lineptr, &n, stdin);
 
 		if (line == -1)
 		{
-			_puts("EOF Detected\n");
 			free(lineptr);
 			lineptr = NULL;
-			_exits();
+			break;
 		}
 		if (line == 1 && lineptr[0] == '\n')
 		{
@@ -71,7 +74,7 @@ int main(int ac, char **av, char **env)
 				perror("tsh: memory allocation error");
 				free(lineptr_cpy);
 				free(lineptr);
-				_exits();
+				break;
 			}
 
 			token = strtok(lineptr_cpy, delim);
@@ -103,7 +106,7 @@ int main(int ac, char **av, char **env)
 			{
 				if (_strcmp(argv[0], "printenv") == 0)
 				{
-					_environ(env); /* Pass env to your print_environment function */
+					_environ(environ); /* Pass env to your print_environment function */
 				}
 
 				if (_strcmp(argv[0], "clear") == 0)
@@ -123,7 +126,7 @@ int main(int ac, char **av, char **env)
 					_exits();
 				}
 
-				_fork(argv);
+				_fork(argv, environ);
 			}
 			else
 			{

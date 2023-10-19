@@ -9,10 +9,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-void exec(char **argv);
+void exec(char **argv, char **environ);
 char *get_location(char *command);
 char *search_in_current_directory(const char *command);
-char *search_in_path(const char *command);
+
+char *search_in_path(const char *command, char **environ);
 
 /*string headers*/
 int _strlen(const char *s);
@@ -25,9 +26,10 @@ char *_strdup(const char *str);
 char* _strchr(const char* str, int character);
 
 
-void _fork(char **argv);
+void _fork(char **argv, char **environ);
 
 void _exits();
 
 void _environ(char **env);
+char* _getenv(const char* name, char** environ);
 #endif

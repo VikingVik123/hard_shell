@@ -6,37 +6,72 @@
  * return: void
  */
 
-void exec(char **argv)
+void exec(char **argv, char **environ)
 {
-	if (argv)
-	{
-		char *command = argv[0];
-        /* Check if the command contains a full path*/
-		if (_strchr(command, '/') != NULL)
-		{
-			if (execve(command, argv, NULL) == -1)
-			{
-				perror("Error:");
-				_exits();
-			}
-		}
-		else
-		{
-			char *actual_command = search_in_path(command);
+	char *path;
+	char *path_copy;
+	char *command;
+	char *path_token;
+	
 
-			if (actual_command == NULL)
-			{
-				/* Command not found in PATH*/
-				perror("Not found");
-				_exits();
-			}
+    if (argv) {
+        command = argv[0];
 
-			if (execve(actual_command, argv, NULL) == -1)
-			{
-				perror("Error:");
-				_exits();
-			}
-			free(actual_command);
-		}
-	}
+        /* Check if the command contains a full path */
+        if (_strchr(command, '/') != NULL) {
+            if (execve(command, argv, environ) == -1) {
+                perror("Error:");
+                _exits();
+            }
+        } else {
+            path = _getenv("PATH", environ);
+
+            if (path == NULL) {
+                /* PATH environment variable not set */
+                perror("Not found");
+                _exits();
+            }
+
+            path_copy = _strdup(path);
+
+            if (path_copy == NULL) {
+                perror("Error:");
+                _exits();
+            }
+
+            path_token = strtok(path_copy, ":");
+
+            while (path_token != NULL) {
+                size_t directory_length = _strlen(path_token);
+                size_t command_length = _strlen(command);
+                size_t file_path_length = directory_length + 1 + command_length + 1; /* +1 for '/' and +1 for '\0' */
+                char *file_path = malloc(file_path_length);
+
+                if (file_path == NULL) {
+                    free(path_copy);
+                    perror("Error:");
+                    _exits();
+                }
+
+                _strcpy(file_path, path_token);
+                _strcat(file_path, "/");
+                _strcat(file_path, command);
+
+                if (execve(file_path, argv, environ) == -1) {
+                    free(file_path);
+                    path_token = strtok(NULL, ":");
+                } else {
+                    free(file_path);
+                    free(path_copy);
+                    perror("Error:");
+                    _exits();
+                }
+            }
+
+            free(path_copy);
+            perror("Not found");
+            _exits();
+        }
+    }
 }
+

@@ -6,7 +6,7 @@
  * return: void
  */
 
-void _fork(char **argv)
+void _fork(char **argv, char **environ)
 {
 	pid_t child_pid;
 	int status;
@@ -21,7 +21,7 @@ void _fork(char **argv)
 	else if (child_pid == 0)
 	{
 		/*This is the child process*/
-		exec(argv);
+		exec(argv, environ);
 		perror("Error:");
 		_exits();
 	}

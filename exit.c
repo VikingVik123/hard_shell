@@ -6,6 +6,5 @@
 
 void _exits(void)
 {
-	_puts("Exiting the shell...\n");
-	exit(1);
+	exit(0);
 }
