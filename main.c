@@ -11,7 +11,7 @@ int main(int ac, char **av, char **environ)
 	char *lineptr_cpy = NULL;
 	const char *delim = "\n ";
 	size_t n = 0;
-	char *token;
+	char *token = 0;	
 	ssize_t line = 0;
 	int num_token = 0;
 	int i = 0;
@@ -30,20 +30,9 @@ int main(int ac, char **av, char **environ)
 		{
 			_puts(prompt);
 		}
-		line = getline(&lineptr, &n, stdin);
-
-		if (line == -1)
-		{
-			free(lineptr);
-			lineptr = NULL;
-			break;
-		}
-		if (line == 1 && lineptr[0] == '\n')
-		{
-			free(lineptr);
-			lineptr = NULL;
-			continue;
-		}
+		line = _getline(&lineptr, &n, stdin);
+		if (!handle_line_result(line, &lineptr, &lineptr_cpy))
+			break; /* Exit the shell*/
 
 		else
 		{
