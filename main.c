@@ -26,6 +26,8 @@ int main(int ac, char **av, char **environ)
 
 	while (1)
 	{
+		num_token = 0;
+		argv = NULL;
 		if (isatty(STDIN_FILENO))
 		{
 			_puts(prompt);
@@ -37,6 +39,10 @@ int main(int ac, char **av, char **environ)
             		free(lineptr);
             		lineptr = NULL;
             		break;
+		}
+		if (lineptr[0] == '\t' || lineptr[0] == '\n')
+        	{
+            		continue;
         	}
 
 
@@ -59,8 +65,13 @@ int main(int ac, char **av, char **environ)
 				num_token++;
 				token = _strtok(NULL, delim);
 			}
+			if (num_token == 0)
+        		{
+            				
+            			continue;
+        		}
 
-			num_token++;
+			
 
 			argv = malloc(sizeof(char *) * (num_token + 1));
 
@@ -120,22 +131,6 @@ int main(int ac, char **av, char **environ)
 					free(lineptr);
 					exit(0);
 				}
-				else if (_strcmp(argv[0], "cd") == 0)
-                		{
-                    			/*Check if the second argument (directory) exists*/
-                    			if (argv[1] != NULL)
-                    			{
-                        			if (chdir(argv[1]) != 0)
-                        			{
-                            				perror("tsh: cd");
-                        			}
-                    			}
-                    			else
-                    			{
-                        			/*Handle "cd" without arguments (go to the home directory)*/
-                        			chdir(_getenv("HOME", environ));
-                    			}
-                		}
 
 				_fork(argv, environ);
 			}
