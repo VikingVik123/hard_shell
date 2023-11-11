@@ -34,4 +34,5 @@ void _environ(char **env);
 char* _getenv(const char* name, char** environ);
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 int handle_line_result(ssize_t line, char **lineptr, char **lineptr_cpy);
+char *_strtok(char *str, const char *delim);
 #endif

@@ -31,10 +31,16 @@ int main(int ac, char **av, char **environ)
 			_puts(prompt);
 		}
 		line = _getline(&lineptr, &n, stdin);
-		if (!handle_line_result(line, &lineptr, &lineptr_cpy))
-			break; /* Exit the shell*/
+		
+		if (line == -1)
+		{
+            		free(lineptr);
+            		lineptr = NULL;
+            		break;
+        	}
 
-		else
+
+		else if (line > 1)
 		{
 			lineptr_cpy = _strdup(lineptr);
 
@@ -46,27 +52,27 @@ int main(int ac, char **av, char **environ)
 				break;
 			}
 			_strcpy(lineptr_cpy, lineptr);
-			token = strtok(lineptr, delim);
+			token = _strtok(lineptr, delim);
 
 			while (token != NULL)
 			{
 				num_token++;
-				token = strtok(NULL, delim);
+				token = _strtok(NULL, delim);
 			}
 
 			num_token++;
 
-			argv = malloc(sizeof(char *) * num_token + 1);
+			argv = malloc(sizeof(char *) * (num_token + 1));
 
 			if (argv == NULL)
 			{
 				perror("tsh: memory allocation error");
 				free(lineptr_cpy);
 				free(lineptr);
-				break;
+				
 			}
 
-			token = strtok(lineptr_cpy, delim);
+			token = _strtok(lineptr_cpy, delim);
 
 			for (i = 0; token != NULL; i++)
 			{
@@ -83,15 +89,15 @@ int main(int ac, char **av, char **environ)
 					free(argv);
 					free(lineptr_cpy);
 					free(lineptr);
-					_exits();
+					exit(2);
 				}
 
 				_strcpy(argv[i], token);
-				token = strtok(NULL, delim);
+				token = _strtok(NULL, delim);
 			}
 			argv[i] = NULL;
 
-			if (argv[0] != NULL) /* Check if the command is not NULL */
+			if (num_token > 0 && argv != NULL && argv[0] != NULL) /* Check if the command is not NULL */
 			{
 				if (_strcmp(argv[0], "printenv") == 0)
 				{
@@ -112,19 +118,36 @@ int main(int ac, char **av, char **environ)
 					free(argv);
 					free(lineptr_cpy);
 					free(lineptr);
-					_exits();
+					exit(0);
 				}
+				else if (_strcmp(argv[0], "cd") == 0)
+                		{
+                    			/*Check if the second argument (directory) exists*/
+                    			if (argv[1] != NULL)
+                    			{
+                        			if (chdir(argv[1]) != 0)
+                        			{
+                            				perror("tsh: cd");
+                        			}
+                    			}
+                    			else
+                    			{
+                        			/*Handle "cd" without arguments (go to the home directory)*/
+                        			chdir(_getenv("HOME", environ));
+                    			}
+                		}
 
 				_fork(argv, environ);
 			}
 			else
 			{
 				/* Handle empty command here, if needed */
+				
 				for (j = 0; j < num_token; j++)
 				{
 					free(argv[j]);
 				}
-				
+				free(argv);
 			}
 
 			free(lineptr_cpy);
