@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 char *search_in_current_directory(const char *command)
 {
 	struct stat buffer;

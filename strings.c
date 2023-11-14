@@ -20,7 +20,6 @@ int _strlen(const char *s)
 	return (i);
 }
 
-
 /**
  * _puts - inserts char
  * @str : character to be inserted
