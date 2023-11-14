@@ -8,19 +8,26 @@
  *
  * Return: The number of characters read, or -1 on error or EOF.
  */
-ssize_t _getline(char **lineptr, size_t *n, FILE *stream) {
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
+{
     ssize_t number_of_characters_read;
 
     number_of_characters_read = getline(lineptr, n, stream);
 
-    if (number_of_characters_read == -1) {
+    if (number_of_characters_read == -1)
+    {
         free(*lineptr);
         *lineptr = NULL;
-    } else if (number_of_characters_read == 1 && (*lineptr)[0] == '\n') {
+    }
+    else if (number_of_characters_read == 1 && (*lineptr)[0] == '\n')
+    {
         free(*lineptr);
         *lineptr = NULL;
-    } else {
-        if ((*lineptr)[number_of_characters_read - 1] == '\n') {
+    }
+    else
+    {
+        if ((*lineptr)[number_of_characters_read - 1] == '\n')
+	{
             (*lineptr)[number_of_characters_read - 1] = '\0';
         }
     }
